@@ -1,10 +1,22 @@
-import gensim
-from gensim.models import Word2Vec
+# -*- coding: utf-8 -*-
+import logging
 import os.path
+import sys
+import multiprocessing
+from gensim.models import Word2Vec
+from gensim.models.word2vec import LineSentence
+
 
 def train_w2v():
-    sentences = gensim.models.word2vec.LineSentence(os.path.join("data",'no.wiki.txt'))
-    model = gensim.models.Word2Vec(sentences, size=300, window=5, min_count=5, workers=4, iter=5)
+    program = os.path.basename(sys.argv[0])
+    logger = logging.getLogger(program)
+
+    logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s')
+    logging.root.setLevel(level=logging.INFO)
+    logger.info("running %s" % ' '.join(sys.argv))
+
+    model = Word2Vec(LineSentence(os.path.join("data",'no.wiki.txt')), size=300, window=5, min_count=5, workers=multiprocessing.cpu_count())
+    model.init_sims(replace=True) # trim memory usage
     model.save(os.path.join("data","no_wiki"))
 
 def test():
