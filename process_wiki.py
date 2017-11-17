@@ -7,6 +7,7 @@ from __future__ import print_function
 
 import logging
 import os.path
+import os
 import six
 import sys
 
@@ -34,7 +35,10 @@ if __name__ == '__main__':
     wiki = WikiCorpus(inp, lemmatize=False, dictionary={})
     for text in wiki.get_texts():
         if six.PY3:
-            output.write(bytes(' '.join(text), 'utf-8').decode('utf-8') + '\n')
+            if os.name == 'nt':
+                output.write(bytes(' '.join(text) + '\n', 'utf-8'))
+            else:
+                output.write(bytes(' '.join(text), 'utf-8').decode('utf-8') + '\n')
         #   ###another method###
         #    output.write(
         #            space.join(map(lambda x:x.decode("utf-8"), text)) + '\n')
